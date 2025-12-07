@@ -19,3 +19,5 @@ joblib
 matplotlib
 python-dotenv
 loguru
+python-multipart
+
