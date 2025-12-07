@@ -1,0 +1,85 @@
+phish-detector/
+│
+├── 📄 README.md
+├── 📄 requirements.txt
+├── 📄 .gitignore
+├── 📄 setup.py                  # (optional if packaging as pip module)
+├── 📄 LICENSE                   # MIT or Apache 2.0
+│
+├── 📂 data/
+│   ├── raw/                     # raw datasets (emails, .eml files, etc.)
+│   ├── processed/               # extracted and cleaned data
+│   ├── features/                # serialized feature arrays (.pkl, .npy)
+│   └── models/                  # pre-trained weights (.pt, .pkl, .bin)
+│
+├── 📂 notebooks/
+│   ├── 01_explore_data.ipynb
+│   ├── 02_feature_extraction_demo.ipynb
+│   ├── 03_train_url_model.ipynb
+│   ├── 04_train_text_model.ipynb
+│   ├── 05_train_fusion_model.ipynb
+│   └── 06_inference_pipeline_test.ipynb
+│
+├── 📂 src/
+│   ├── __init__.py
+│   │
+│   ├── 📂 email_parser/
+│   │   ├── __init__.py
+│   │   ├── parser.py            # MIME parser (headers, body, attachments)
+│   │   ├── extract_urls.py      # URL extraction from HTML/text
+│   │   ├── extract_images.py    # handle inline/attached images
+│   │   └── sanitize_html.py
+│   │
+│   ├── 📂 features/
+│   │   ├── __init__.py
+│   │   ├── text_features.py     # transformer embeddings, keyword stats
+│   │   ├── url_features.py      # handcrafted URL features
+│   │   ├── image_features.py    # OCR, QR decoding, perceptual hash
+│   │   ├── exif_features.py     # EXIF + metadata extraction
+│   │   ├── header_features.py   # SPF, DKIM, DMARC, routing anomalies
+│   │   └── fusion_features.py   # combine all into a unified vector
+│   │
+│   ├── 📂 models/
+│   │   ├── __init__.py
+│   │   ├── text_model.py        # transformer fine-tuning
+│   │   ├── url_model.py         # GBDT or sklearn model
+│   │   ├── vision_model.py      # CNN/ViT for image classification
+│   │   ├── fusion_model.py      # late fusion (logistic / MLP)
+│   │   └── utils.py
+│   │
+│   ├── 📂 inference/
+│   │   ├── __init__.py
+│   │   ├── pipeline.py          # complete email → prediction pipeline
+│   │   └── explain.py           # explainability (top URLs, OCR text, etc.)
+│   │
+│   ├── 📂 api/
+│   │   ├── __init__.py
+│   │   ├── app.py               # FastAPI app
+│   │   └── routes.py            # API endpoints (upload email, get score)
+│   │
+│   ├── 📂 utils/
+│   │   ├── __init__.py
+│   │   ├── logging_utils.py
+│   │   ├── config.py
+│   │   ├── file_utils.py
+│   │   └── metrics.py           # precision, recall, ROC, PR-AUC, etc.
+│   │
+│   └── 📂 training/
+│       ├── __init__.py
+│       ├── train_url_model.py
+│       ├── train_text_model.py
+│       ├── train_vision_model.py
+│       ├── train_fusion_model.py
+│       └── data_preparation.py
+│
+├── 📂 tests/
+│   ├── test_parser.py
+│   ├── test_feature_extraction.py
+│   ├── test_models.py
+│   └── test_api.py
+│
+└── 📂 deployment/
+    ├── Dockerfile
+    ├── docker-compose.yml
+    ├── start.sh
+    └── gunicorn_conf.py

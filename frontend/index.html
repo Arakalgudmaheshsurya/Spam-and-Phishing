@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Advanced Phishing Detector UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card-bg: #111827;
+      --accent: #6366f1;
+      --good: #22c55e;
+      --warn: #facc15;
+      --bad: #ef4444;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #111827 0, #020617 55%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1100px;
+      padding: 24px 16px 40px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .header-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-chip {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .header-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 640px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(148, 163, 184, 0.06);
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: var(--muted);
+    }
+
+    .upload-box {
+      border-radius: 12px;
+      border: 1px dashed rgba(75, 85, 99, 0.85);
+      padding: 14px 12px;
+      background: rgba(15, 23, 42, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .upload-top-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .file-input-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    input[type="file"] {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.35);
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out,
+        filter 0.08s ease-out;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-primary:not(:disabled):hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 16px 28px rgba(59, 130, 246, 0.45);
+    }
+
+    .status-line {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+      min-height: 1.1em;
+    }
+
+    .label-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .label-badge.phishing {
+      border-color: rgba(248, 113, 113, 0.9);
+      color: #fecaca;
+      background: radial-gradient(circle at 0 0, rgba(248, 113, 113, 0.22), transparent 55%);
+    }
+
+    .label-badge.suspicious {
+      border-color: rgba(250, 204, 21, 0.9);
+      color: #fef9c3;
+      background: radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.18), transparent 55%);
+    }
+
+    .label-badge.legit {
+      border-color: rgba(52, 211, 153, 0.9);
+      color: #bbf7d0;
+      background: radial-gradient(circle at 0 0, rgba(52, 211, 153, 0.2), transparent 55%);
+    }
+
+    .label-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background-color: currentColor;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .score-bar {
+      position: relative;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.95);
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .score-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
+      transition: width 0.18s ease-out;
+    }
+
+    .score-caption {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 12px;
+      margin-top: 8px;
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .meta-label {
+      color: #6b7280;
+    }
+
+    .meta-value {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b7280;
+      margin: 10px 0 6px;
+    }
+
+    .pill-small {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: var(--muted);
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .urls-list,
+    .ocr-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.76rem;
+    }
+
+    .url-item {
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      overflow-wrap: anywhere;
+    }
+
+    .url-main {
+      color: #93c5fd;
+    }
+
+    .url-meta {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    .ocr-item {
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      color: var(--muted);
+    }
+
+    .json-box {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 10px;
+      background: #020617;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      max-height: 260px;
+      overflow: auto;
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <div class="header-title">
+        🛡️ Advanced Phishing Detector
+        <span class="header-chip">local · experimental · multimodal</span>
+      </div>
+      <div class="header-subtitle">
+        Upload a raw <code>.eml</code> file. The backend analyzes text, URLs, and embedded images (with OCR)
+        to estimate phishing risk and show the signals it used.
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- Left: upload & summary -->
+      <section class="card">
+        <div class="card-title">
+          Email upload
+          <span class="pill">/score-email</span>
+        </div>
+
+        <form id="upload-form" class="upload-box">
+          <div class="upload-top-row">
+            <div>
+              <div class="file-input-label">Choose a <code>.eml</code> file</div>
+              <input id="file-input" type="file" name="file" accept=".eml,message/rfc822" required />
+            </div>
+            <button id="analyze-btn" class="btn-primary" type="submit">
+              <span>Analyze email</span>
+              <span>↗</span>
+            </button>
+          </div>
+          <div class="status-line" id="status-line">Idle</div>
+        </form>
+
+        <div style="margin-top: 14px;">
+          <div class="section-title">Summary</div>
+          <div id="summary-empty" class="muted">
+            No email analyzed yet. Once you upload an email, you’ll see the verdict and score here.
+          </div>
+
+          <div id="summary-main" class="hidden">
+            <div id="label-badge" class="label-badge suspicious">
+              <span class="label-dot"></span>
+              <span id="label-text">suspicious</span>
+            </div>
+
+            <div class="score-row">
+              <span>Overall phishing score</span>
+              <span id="score-percent">0%</span>
+            </div>
+            <div class="score-bar">
+              <div id="score-bar-fill" class="score-bar-fill"></div>
+            </div>
+            <div class="score-caption">
+              Scores near 1.0 are likely phishing. Mid-range scores are flagged as suspicious.
+            </div>
+
+            <div class="meta-grid">
+              <div>
+                <div class="meta-label">From</div>
+                <div class="meta-value" id="meta-from">–</div>
+              </div>
+              <div>
+                <div class="meta-label">Subject</div>
+                <div class="meta-value" id="meta-subject">–</div>
+              </div>
+              <div>
+                <div class="meta-label">Text model</div>
+                <div class="meta-value" id="meta-text-score">–</div>
+              </div>
+              <div>
+                <div class="meta-label">URL model (max)</div>
+                <div class="meta-value" id="meta-url-score">–</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: details -->
+      <section class="card">
+        <div class="card-title">
+          Signals &amp; explanations
+          <span class="pill">model outputs</span>
+        </div>
+
+        <div class="section-title">Top URLs</div>
+        <ul id="urls-list" class="urls-list">
+          <li class="muted" id="urls-empty">No URLs extracted.</li>
+        </ul>
+
+        <div class="section-title">OCR snippets</div>
+        <ul id="ocr-list" class="ocr-list">
+          <li class="muted" id="ocr-empty">No image text detected.</li>
+        </ul>
+
+        <div class="section-title">Raw response (debug)</div>
+        <pre id="json-box" class="json-box muted">{}</pre>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById("upload-form");
+    const fileInput = document.getElementById("file-input");
+    const analyzeBtn = document.getElementById("analyze-btn");
+    const statusLine = document.getElementById("status-line");
+
+    const summaryEmpty = document.getElementById("summary-empty");
+    const summaryMain = document.getElementById("summary-main");
+    const labelBadge = document.getElementById("label-badge");
+    const labelText = document.getElementById("label-text");
+    const scorePercent = document.getElementById("score-percent");
+    const scoreBarFill = document.getElementById("score-bar-fill");
+    const metaFrom = document.getElementById("meta-from");
+    const metaSubject = document.getElementById("meta-subject");
+    const metaTextScore = document.getElementById("meta-text-score");
+    const metaUrlScore = document.getElementById("meta-url-score");
+
+    const urlsList = document.getElementById("urls-list");
+    const urlsEmpty = document.getElementById("urls-empty");
+    const ocrList = document.getElementById("ocr-list");
+    const ocrEmpty = document.getElementById("ocr-empty");
+    const jsonBox = document.getElementById("json-box");
+
+    function setStatus(text) {
+      statusLine.textContent = text;
+    }
+
+    function setBadge(label) {
+      const cls = ["label-badge", label];
+      labelBadge.className = cls.join(" ");
+      labelText.textContent = label;
+    }
+
+    function formatPct(x) {
+      if (x == null || Number.isNaN(x)) return "–";
+      return (x * 100).toFixed(1) + "%";
+    }
+
+    function formatScore(x) {
+      if (x == null || Number.isNaN(x)) return "–";
+      return x.toFixed(3);
+    }
+
+    function clearList(node, emptyNode) {
+      node.innerHTML = "";
+      if (emptyNode) {
+        node.appendChild(emptyNode);
+      }
+    }
+
+    function renderResult(data) {
+      summaryEmpty.classList.add("hidden");
+      summaryMain.classList.remove("hidden");
+
+      const label = data.label || "suspicious";
+      const score = typeof data.phish_score === "number" ? data.phish_score : 0;
+
+      setBadge(label);
+      scorePercent.textContent = formatPct(score);
+      scoreBarFill.style.width = Math.max(0, Math.min(score * 100, 100)) + "%";
+
+      const hdrs = data.headers || {};
+      metaFrom.textContent = hdrs.from || "–";
+      metaSubject.textContent = hdrs.subject || "–";
+
+      metaTextScore.textContent = formatScore(data.text_score);
+      metaUrlScore.textContent = formatScore(data.url_max_score);
+
+      // URLs
+      urlsList.innerHTML = "";
+      const topUrls = (data.explanations && data.explanations.top_urls) || [];
+      if (!topUrls.length) {
+        const li = document.createElement("li");
+        li.className = "muted";
+        li.textContent = "No URLs extracted or scored.";
+        urlsList.appendChild(li);
+      } else {
+        topUrls.forEach((u) => {
+          const li = document.createElement("li");
+          li.className = "url-item";
+          li.innerHTML = `
+            <div class="url-main">${u.url}</div>
+            <div class="url-meta">
+              score=${formatScore(u.score)} · login=${u.contains_login ? "yes" : "no"} · ip=${
+            u.has_ip ? "yes" : "no"
+          }
+            </div>
+          `;
+          urlsList.appendChild(li);
+        });
+      }
+
+      // OCR
+      ocrList.innerHTML = "";
+      const ocr = data.ocr_texts || [];
+      if (!ocr.length) {
+        const li = document.createElement("li");
+        li.className = "muted";
+        li.textContent = "No OCR text found in inline/attached images.";
+        ocrList.appendChild(li);
+      } else {
+        ocr.slice(0, 3).forEach((t) => {
+          const li = document.createElement("li");
+          li.className = "ocr-item";
+          li.textContent = t.trim().slice(0, 220);
+          ocrList.appendChild(li);
+        });
+      }
+
+      // Raw JSON
+      jsonBox.textContent = JSON.stringify(data, null, 2);
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!fileInput.files.length) {
+        setStatus("Please choose a .eml file first.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+
+      analyzeBtn.disabled = true;
+      setStatus(`Uploading "${file.name}" ...`);
+
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const resp = await fetch("/score-email", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!resp.ok) {
+          const txt = await resp.text();
+          setStatus(`Error ${resp.status}: ${txt.slice(0, 140)}...`);
+          analyzeBtn.disabled = false;
+          return;
+        }
+
+        const data = await resp.json();
+        renderResult(data);
+        setStatus("Analysis complete ✔");
+
+      } catch (err) {
+        console.error(err);
+        setStatus("Network or server error. Check console / backend logs.");
+      } finally {
+        analyzeBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

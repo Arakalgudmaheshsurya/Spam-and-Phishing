@@ -1,0 +1,8 @@
+2025-12-01 17:23:20.702 | INFO     | src.api.app:score_email:48 - Received file: name=mock_chase_alert.eml, size=4426 bytes
+2025-12-01 17:23:21.770 | INFO     | src.api.app:score_email:56 - Scored email | from=Chase Security <alerts@chase-secure-center.com> subject='Unusual sign-in attempt – verify your Chase account' label=phishing score=0.747
+2025-12-01 19:26:50.632 | INFO     | src.api.app:score_email:48 - Received file: name=Notification of Change in Registered Address _ Effective December 1, 2025.eml, size=10886 bytes
+2025-12-01 19:26:51.412 | INFO     | src.api.app:score_email:56 - Scored email | from=Credila <no-reply@mailer.credila.com> subject='Notification of Change in Registered Address | Effective December 1, 2025' label=phishing score=0.941
+2025-12-01 19:28:02.148 | INFO     | src.api.app:score_email:48 - Received file: name=Signature status of CIMO Agreement.eml, size=21149 bytes
+2025-12-01 19:28:02.156 | INFO     | src.api.app:score_email:56 - Scored email | from=Beverly Plaza Apartments <no-reply@rentcafe.com> subject='Signature status of CIMO Agreement' label=suspicious score=0.428
+2025-12-01 19:29:49.281 | INFO     | src.api.app:score_email:48 - Received file: name=Updates to your communication preferences.eml, size=28719 bytes
+2025-12-01 19:29:49.287 | INFO     | src.api.app:score_email:56 - Scored email | from="Booking.com" <noreply@booking.com> subject='Updates to your communication preferences' label=suspicious score=0.563
