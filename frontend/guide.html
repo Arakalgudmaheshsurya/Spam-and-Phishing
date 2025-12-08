@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Export Guide • PhishGuard Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    
+    :root {
+      --bg-deep: #030712;
+      --bg-surface: #0a0f1c;
+      --bg-elevated: #111827;
+      --accent-cyan: #06b6d4;
+      --accent-cyan-glow: rgba(6, 182, 212, 0.4);
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-blue: #3b82f6;
+      --accent-red: #ef4444;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-subtle: rgba(148, 163, 184, 0.1);
+      --border-glow: rgba(6, 182, 212, 0.3);
+      --glass: rgba(15, 23, 42, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+
+    .bg-glow {
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      filter: blur(120px);
+      animation: floatGlow 20s ease-in-out infinite;
+    }
+
+    .bg-glow-1 {
+      top: -400px;
+      right: -200px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15), transparent 70%);
+    }
+
+    .bg-glow-2 {
+      bottom: -400px;
+      left: -200px;
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.1), transparent 70%);
+      animation-delay: -10s;
+    }
+
+    @keyframes floatGlow {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(50px, 30px) scale(1.1); }
+      66% { transform: translate(-30px, -20px) scale(0.95); }
+    }
+
+    /* App container */
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* Back button */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: var(--glass);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      margin-bottom: 32px;
+    }
+
+    .back-link:hover {
+      color: var(--accent-cyan);
+      border-color: var(--border-glow);
+      transform: translateX(-4px);
+    }
+
+    .back-icon {
+      font-size: 1.1rem;
+      transition: transform 0.2s ease;
+    }
+
+    .back-link:hover .back-icon {
+      transform: translateX(-3px);
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header-icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 
+        0 0 40px var(--accent-cyan-glow),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .header-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .header-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Platform tabs */
+    .platform-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      animation: fadeInUp 0.6s ease-out 0.1s backwards;
+    }
+
+    .platform-tab {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--glass);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .platform-tab:hover {
+      border-color: var(--border-glow);
+      color: var(--text-primary);
+    }
+
+    .platform-tab.active {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(16, 185, 129, 0.1));
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+    }
+
+    .platform-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .platform-icon.outlook {
+      background: linear-gradient(135deg, #0078d4, #00bcf2);
+    }
+
+    .platform-icon.gmail {
+      background: linear-gradient(135deg, #ea4335, #fbbc04);
+    }
+
+    /* Guide content */
+    .guide-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .guide-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Info banner */
+    .info-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      border-radius: 12px;
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      margin-bottom: 32px;
+    }
+
+    .info-banner-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .info-banner-text {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .info-banner-text strong {
+      color: var(--accent-cyan);
+    }
+
+    /* Steps container */
+    .steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Step card */
+    .step-card {
+      background: var(--glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 40px rgba(6, 182, 212, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .step-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .step-card:hover::before {
+      opacity: 1;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .step-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--bg-deep);
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px var(--accent-cyan-glow);
+    }
+
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .step-content {
+      padding-left: 60px;
+    }
+
+    .step-text {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .step-text code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    /* Keyboard shortcut */
+    .kbd-combo {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 4px 0;
+    }
+
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-bottom-width: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .kbd-plus {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    /* Visual hint box */
+    .visual-hint {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      margin-top: 12px;
+    }
+
+    .visual-hint-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .visual-hint-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Menu path */
+    .menu-path {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+
+    .menu-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .menu-arrow {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Tips section */
+    .tips-section {
+      margin-top: 48px;
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .tips-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tips-icon {
+      font-size: 1.3rem;
+    }
+
+    .tips-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent-emerald);
+    }
+
+    .tips-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tips-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .tips-list li::before {
+      content: '✓';
+      color: var(--accent-emerald);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Warning box */
+    .warning-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 18px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      margin-top: 12px;
+    }
+
+    .warning-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .warning-text {
+      font-size: 0.85rem;
+      color: var(--accent-amber);
+      line-height: 1.5;
+    }
+
+    /* CTA section */
+    .cta-section {
+      text-align: center;
+      margin-top: 48px;
+      padding: 32px;
+      border-radius: 16px;
+      background: var(--glass);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(20px);
+    }
+
+    .cta-text {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      color: var(--bg-deep);
+      text-decoration: none;
+      box-shadow: 
+        0 4px 20px var(--accent-cyan-glow),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: all 0.2s ease;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 30px var(--accent-cyan-glow),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .cta-icon {
+      font-size: 1.2rem;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-subtle);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .platform-tabs {
+        flex-direction: column;
+      }
+      
+      .step-content {
+        padding-left: 0;
+        margin-top: 12px;
+      }
+      
+      .header-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-canvas">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+  </div>
+
+  <div class="app">
+    <a href="index.html" class="back-link">
+      <span class="back-icon">←</span>
+      Back to PhishGuard Pro
+    </a>
+
+    <header class="header">
+      <div class="header-icon">📧</div>
+      <h1 class="header-title">How to Export .EML Files</h1>
+      <p class="header-subtitle">
+        Follow these simple steps to download email files from your mail client for phishing analysis
+      </p>
+    </header>
+
+    <div class="platform-tabs">
+      <button class="platform-tab active" data-platform="outlook">
+        <span class="platform-icon outlook">📘</span>
+        Microsoft Outlook
+      </button>
+      <button class="platform-tab" data-platform="gmail">
+        <span class="platform-icon gmail">📕</span>
+        Gmail
+      </button>
+    </div>
+
+    <!-- Outlook Guide -->
+    <div class="guide-content active" id="outlook-guide">
+      <div class="info-banner">
+        <span class="info-banner-icon">💡</span>
+        <p class="info-banner-text">
+          <strong>Works with:</strong> Outlook Desktop App (Windows & Mac), Outlook Web (outlook.com, office.com), 
+          and Microsoft 365 Outlook
+        </p>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Open the Suspicious Email</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              Navigate to your inbox and click on the email you want to analyze. 
+              <strong>Do not click any links</strong> or download any attachments from the email itself.
+            </p>
+            <div class="warning-box">
+              <span class="warning-icon">⚠️</span>
+              <p class="warning-text">
+                If you suspect the email is malicious, avoid interacting with its content. 
+                Just select it to view in the preview pane.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Access the Save Options</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              <strong>For Outlook Desktop:</strong> Click on <code>File</code> in the top menu, then select <code>Save As</code>
+            </p>
+            <div class="menu-path">
+              <span class="menu-item">📁 File</span>
+              <span class="menu-arrow">→</span>
+              <span class="menu-item">💾 Save As</span>
+            </div>
+            <p class="step-text" style="margin-top: 16px;">
+              <strong>Keyboard shortcut:</strong>
+            </p>
+            <div class="kbd-combo">
+              <span class="kbd">Ctrl</span>
+              <span class="kbd-plus">+</span>
+              <span class="kbd">Shift</span>
+              <span class="kbd-plus">+</span>
+              <span class="kbd">S</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Select the .EML Format</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              In the Save As dialog, click the <code>Save as type</code> dropdown and select:
+            </p>
+            <div class="menu-path">
+              <span class="menu-item">📄 Outlook Message Format - Unicode (*.msg)</span>
+              <span class="menu-arrow">→</span>
+              <span class="menu-item" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">📧 Text Only (*.eml)</span>
+            </div>
+            <div class="visual-hint">
+              <span class="visual-hint-icon">💡</span>
+              <p class="visual-hint-text">
+                If you don't see .eml option, you may need to use "Outlook Message Format" (.msg) 
+                or use Outlook Web instead
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">4</div>
+            <h3 class="step-title">Save and Upload</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              Choose a location on your computer (like Desktop or Downloads), give the file a name, 
+              and click <code>Save</code>. Then upload the .eml file to PhishGuard Pro for analysis.
+            </p>
+            <div class="visual-hint">
+              <span class="visual-hint-icon">✅</span>
+              <p class="visual-hint-text">
+                The file will be saved with a .eml extension and is ready for threat analysis
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-section">
+        <div class="tips-header">
+          <span class="tips-icon">🎯</span>
+          <h4 class="tips-title">Pro Tips for Outlook</h4>
+        </div>
+        <ul class="tips-list">
+          <li>You can also drag and drop emails directly from Outlook to your desktop to create .msg files</li>
+          <li>For Outlook Web, use the "View message source" option and save as .eml manually</li>
+          <li>Keep suspicious emails in a separate folder for easy tracking and reporting</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Gmail Guide -->
+    <div class="guide-content" id="gmail-guide">
+      <div class="info-banner">
+        <span class="info-banner-icon">💡</span>
+        <p class="info-banner-text">
+          <strong>Works with:</strong> Gmail on any web browser (Chrome, Firefox, Safari, Edge) 
+          and Google Workspace accounts
+        </p>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Open the Suspicious Email</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              Go to <code>mail.google.com</code> and click on the email you want to analyze. 
+              The email will open in full view. <strong>Avoid clicking any links</strong> within the email content.
+            </p>
+            <div class="warning-box">
+              <span class="warning-icon">⚠️</span>
+              <p class="warning-text">
+                Gmail may warn you about suspicious emails. Take note of any warnings 
+                but proceed with the export for detailed analysis.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Open the More Options Menu</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              Look for the <strong>three vertical dots</strong> (⋮) icon in the top-right corner of the email, 
+              next to the reply arrow. Click it to open the dropdown menu.
+            </p>
+            <div class="visual-hint">
+              <span class="visual-hint-icon">📍</span>
+              <p class="visual-hint-text">
+                The menu icon is located in the same row as the star, reply, and forward buttons
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Download the Message</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              In the dropdown menu, click on <code>Download message</code>. 
+              Gmail will automatically save the email as an .eml file.
+            </p>
+            <div class="menu-path">
+              <span class="menu-item">⋮ More</span>
+              <span class="menu-arrow">→</span>
+              <span class="menu-item" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">⬇️ Download message</span>
+            </div>
+            <div class="visual-hint">
+              <span class="visual-hint-icon">📂</span>
+              <p class="visual-hint-text">
+                The file will be downloaded to your default Downloads folder with a .eml extension
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">4</div>
+            <h3 class="step-title">Upload to PhishGuard Pro</h3>
+          </div>
+          <div class="step-content">
+            <p class="step-text">
+              Locate the downloaded .eml file in your Downloads folder. 
+              The filename will typically be the email subject followed by <code>.eml</code>. 
+              Drag and drop it into PhishGuard Pro or use the file picker.
+            </p>
+            <div class="visual-hint">
+              <span class="visual-hint-icon">✅</span>
+              <p class="visual-hint-text">
+                Gmail's .eml files include full headers and attachments - perfect for thorough analysis
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-section">
+        <div class="tips-header">
+          <span class="tips-icon">🎯</span>
+          <h4 class="tips-title">Pro Tips for Gmail</h4>
+        </div>
+        <ul class="tips-list">
+          <li>Use "Show original" option to view raw email headers before downloading</li>
+          <li>Report phishing to Google first using "Report phishing" before downloading</li>
+          <li>Check the sender's actual email address by hovering over their name</li>
+          <li>Gmail's .eml files preserve all original headers needed for forensic analysis</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <p class="cta-text">Ready to analyze your email file?</p>
+      <a href="index.html" class="cta-btn">
+        <span class="cta-icon">🛡️</span>
+        Start Threat Analysis
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Platform tab switching
+    const tabs = document.querySelectorAll('.platform-tab');
+    const guides = document.querySelectorAll('.guide-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const platform = tab.dataset.platform;
+        
+        // Update active tab
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Show corresponding guide
+        guides.forEach(g => g.classList.remove('active'));
+        document.getElementById(`${platform}-guide`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

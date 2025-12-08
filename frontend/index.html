@@ -236,6 +236,63 @@
       color: var(--accent-cyan);
     }
 
+    /* Header row with guide button */
+    .header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .guide-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--glass);
+      color: var(--text-secondary);
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .guide-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.08);
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .guide-btn-icon {
+      font-size: 1.1rem;
+    }
+
+    .guide-btn-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .guide-btn-title {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .guide-btn-subtitle {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
     /* Layout grid */
     .main-grid {
       display: grid;
@@ -910,12 +967,21 @@
 
   <div class="app">
     <header class="header">
-      <div class="logo-row">
-        <div class="logo-icon">🛡️</div>
-        <div class="logo-text">
-          <div class="logo-title">PhishGuard Pro</div>
-          <div class="logo-subtitle">Advanced Threat Detection System</div>
+      <div class="header-row">
+        <div class="logo-row">
+          <div class="logo-icon">🛡️</div>
+          <div class="logo-text">
+            <div class="logo-title">PhishGuard Pro</div>
+            <div class="logo-subtitle">Advanced Threat Detection System</div>
+          </div>
         </div>
+        <a href="guide.html" class="guide-btn">
+          <span class="guide-btn-icon">📖</span>
+          <span class="guide-btn-text">
+            <span class="guide-btn-title">Export Guide</span>
+            <span class="guide-btn-subtitle">How to get .eml files</span>
+          </span>
+        </a>
       </div>
       <div class="header-tags">
         <span class="tag active">● ONLINE</span>
